@@ -67,10 +67,11 @@ geh <- ggplot(ellas_hacen, aes(fill=Periodo, y=Titulares, x=Provincia)) +
   geom_bar( stat="identity", position="fill")
 geh <- geh + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
                panel.background = element_blank(), axis.line = element_line(colour = "black"),
-          axis.text.x = element_text(angle = 90, hjust = 1, colour = a))
-print(geh + ggtitle("Programa 'Ellas Hacen' 2015-2017"))
+          axis.text.x = element_text(angle = 90, hjust = 1, colour = a))+ 
+  ggtitle("Programa 'Ellas Hacen' 2015-2017")
+geh 
 
-ggsave(paste0(FIGURAS, "economia_social_fig1.png"), geh)
+ggsave(paste0(FIGURAS, "economia_social_EH_porcentaje.png"), geh)
 
 
 #' ## Elegir las bases de datoS "AT"
@@ -90,10 +91,11 @@ gat <- ggplot(argentina_trabaja, aes(fill=Periodo, y=Titulares, x=Provincia)) +
   geom_bar( stat="identity", position="fill")
 gat <- gat + theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
                    panel.background = element_blank(), axis.line = element_line(colour = "black"),
-                   axis.text.x = element_text(angle = 90, hjust = 1, colour = a))
-print(gat + ggtitle("Programa 'Argentina Trabaja' 2015-2017"))
+                   axis.text.x = element_text(angle = 90, hjust = 1, colour = a)) +
+  ggtitle("Programa 'Argentina Trabaja' 2015-2017")
+gat  
 
-ggsave(paste0(FIGURAS, "economia_social_fig2.png"), gat)
+ggsave(paste0(FIGURAS, "economia_social_AT_porcentaje.png"), gat)
 
 #' ## Normalizar con respecto a los 
 #' cambio los nombres de las provincias en el data frame de 'censo'
@@ -112,6 +114,7 @@ geh <- ggplot(EH, aes(fill=as.character(Periodo), y=(Titulares/Mujeres)*100, x=P
 geh <- geh + ylab("%") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
         panel.background = element_blank(), axis.line = element_line(colour = "black"),
-        axis.text.x = element_text(angle = 90, hjust = 1, color=a))
-print(geh + ggtitle("Programa 'Ellas Hacen' 2015-2017 normalizado con Censo 2010"))
+        axis.text.x = element_text(angle = 90, hjust = 1, color=a)) + 
+  ggtitle("Programa 'Ellas Hacen' 2015-2017 normalizado con Censo 2010")
+geh 
 ggsave(paste0(FIGURAS,"EH_bar_norm.png"),geh,dpi = 600)
