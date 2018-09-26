@@ -118,3 +118,26 @@ geh <- geh + ylab("%") +
   ggtitle("Programa 'Ellas Hacen' 2015-2017 normalizado con Censo 2010")
 geh 
 ggsave(paste0(FIGURAS,"EH_bar_norm.png"),geh,dpi = 600)
+
+#' Argentina trabaja mujeres
+ATM <- df4 %>% filter(Programa == "AT") %>% filter(Sexo=="F")
+geh <- ggplot(ATM, aes(fill=as.character(Periodo), y=(Titulares/Mujeres)*100, x=Provincia)) + 
+  geom_bar(stat = "identity") + scale_fill_discrete(name="Años")
+geh <- geh + ylab("%") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), axis.line = element_line(colour = "black"),
+        axis.text.x = element_text(angle = 90, hjust = 1, color=a)) + 
+  ggtitle("Programa 'Argentina Trabaja' mujeres 2015-2017 normalizado")
+geh 
+ggsave(paste0(FIGURAS,"ATM_bar_norm.png"),geh,dpi = 600)
+#' Argentina trabaja hombres
+ATH <- df4 %>% filter(Programa == "AT") %>% filter(Sexo=="M")
+geh <- ggplot(ATH, aes(fill=as.character(Periodo), y=(Titulares/Varones)*100, x=Provincia)) + 
+  geom_bar(stat = "identity") + scale_fill_discrete(name="Años")
+geh <- geh + ylab("%") +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), axis.line = element_line(colour = "black"),
+        axis.text.x = element_text(angle = 90, hjust = 1, color=a)) + 
+  ggtitle("Programa 'Argentina Trabaja' hombres 2015-2017 normalizado")
+geh 
+ggsave(paste0(FIGURAS,"ATH_bar_norm.png"),geh,dpi = 600)
