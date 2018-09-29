@@ -23,7 +23,7 @@ colnames(cap_docente_cursos) <- c("Año", "Cantidad de Cursos", "Cantidad de Ins
 
 write.csv(cap_docente_cursos, paste0(DATOS, "10_esi_capacitacion_docente_cursos.csv"))
 
-#' ## Tabla capacitacion docente
+#' ## Tabla capacitacion docente (pag 5)
 #' 
 cap_docente_cantidad <- data.frame("Periodo" = c("2008-2011", seq(2012,2017,1)),
                               "Cantidad escuelas" = c(NA,6000,10000,14000,14000,100,500),
@@ -33,7 +33,7 @@ colnames(cap_docente_cantidad) <- c("Periodo", "Cantidad escuelas", "docentes")
 
 write.csv(cap_docente_cantidad,paste0(DATOS, "10_esi_capacitacion_docente_cantidad.csv"))    
 
-#' ## Tabla inversión
+#' ## Tabla inversión (pag 7)
 #' 
 
 inversion_esi <- data.frame("Año" = seq(2009,2017,1),
