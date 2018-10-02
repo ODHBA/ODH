@@ -10,6 +10,8 @@
 suppressPackageStartupMessages(library(dplyr))
 library(magrittr)
 library(ggplot2)
+library(tidyr)
+library(dplyr)
 # library(broom)
 # library(extrafont)
 
@@ -39,3 +41,37 @@ colnames(presupuesto) <- c("Año", "Cred. Inicial", "Cred. Vigente", "Devengado"
 #' 
 #' 
 df <- merge(presupuesto,inflacion,by = "Año")
+
+#' **3.Normalizar valores**
+#' La inflacion el primer año se toma como 100 y cada año ya respresenta lo que varia
+#' respecto al anterior, para ver la evoluacion del 3 año se acumula.
+#' 
+#' Los presupuestos se calculan respecto al año anterior
+
+#' reemplazo primero el valor de Inflación INDEC por Inflación ambito en 2015
+
+df$X..IPC_INDEC[1] <- df$X..IPC_Ambito[1]
+df$X <- NULL
+df$`Cred. Inicial N.` <- cumsum(c(100,(diff(df$`Cred. Inicial`)[1]/df$`Cred. Inicial`[1])*100,
+                           (diff(df$`Cred. Inicial`)[2]/df$`Cred. Inicial`[2])*100))
+df$`Cred. Vigente N.` <- cumsum(c(100,(diff(df$`Cred. Vigente`)[1]/df$`Cred. Vigente`[1])*100,
+                           (diff(df$`Cred. Vigente`)[2]/df$`Cred. Vigente`[2])*100))
+df$`Devengado N.` <- cumsum(c(100,(diff(df$Devengado)[1]/df$Devengado[1])*100,
+                           (diff(df$Devengado)[2]/df$Devengado[2])*100))
+df$Inflacion <- cumsum(c(100,df$X..IPC_INDEC[2],df$X..IPC_INDEC[3]))
+df$Año <- round(df$Año,digits = 0)
+df2 <- df %>% select(Año,`Cred. Inicial N.`,`Cred. Vigente N.`,`Devengado N.`,Inflacion) %>%
+  gather(key = "variable",value = "value",-Año) 
+
+#' 
+
+#' ## GRAFICO
+p1 <- ggplot(df2,aes(x=Año,y=value)) + 
+  geom_line(aes(color=variable)) +
+  scale_color_manual(values = c("#00AFBB", "#E7B800","red","#000000"), name="Presupuesto") + 
+  ylab(label="%") +
+  scale_x_continuous(breaks=c(2015, 2016, 2017))  + theme_bw()
+
+ggsave(paste0(FIGURAS,"presupuesto_salud_inflacion_bw.png"),p1,dpi = 600)
+  
+p1
