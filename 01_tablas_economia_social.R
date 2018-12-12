@@ -36,7 +36,10 @@ DATOS <- "/home/noelia/MEGAsync/ODH/datos_economia_social/"
 # tabla1_ori <- ocr(paste0(DATOS, "economia_social_4.png")) %>%
 #   readr::read_lines()
 
-
+#' Otra forma de cargar las tablas de los _pdfs_ es por medio del 
+#' paquete *tabulizer*. Ver ejemplos en 
+#' https://ropensci.org/tutorials/tabulizer_tutorial/
+#' 
 #' Abrir las paginas 5 a 8 (incluidos) = Tabla 2
 paginas <- seq(5,8,1)
 
