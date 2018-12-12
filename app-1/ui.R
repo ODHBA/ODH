@@ -45,7 +45,7 @@ ui <- fluidPage(
                                                 h3("Programa"),
                                                 choices = list( "Arg. Trabaja" = "AT",
                                                                 "Ellas Hacen" = "EH"),
-                                                selected = c("AT","EH"))
+                                                selected = "AT")
                       )
                      )
                           
@@ -53,7 +53,7 @@ ui <- fluidPage(
              fluidRow(
                plotOutput("distPlot")
              ),
-             tabPanel("Pers. en sit. calle","hola")
+             tabPanel("Pers. en sit. calle","Hello World")
   )
 )
 

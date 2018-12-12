@@ -16,16 +16,34 @@ for (tt in 1:length(df$Periodo)) df$Periodo[tt] <- format(as.Date(paste0(as.char
                                                                   format = "%Y%m%d"),"%Y")
 # Define server logic required to draw a histogram
 server <- function(input, output) {
-  output$distPlot <- renderPlot({
-    serie <- df[,2:6] %>% filter(Programa==input$prog) %>% 
-      filter(Sexo == input$sex) %>% group_by(Periodo) %>%
-      arrange(Periodo) %>% filter(Provincia == input$prov) %>%
-      unique()
-    ggplot(serie) +
-      geom_line(aes(x=Periodo,y=Titulares,colour=Programa))  
-      # scale_color_discrete(name = "Programa", labels = c("AT", "EH")) +
-      # geom_tile("Cantidad de titulares de los planes 2015-2017")
-  })
+  dat <- reactive({
+    if (!is.null(input$prog) && !is.null(input$sex)) {
+      serie <- df[,2:6] %>% group_by(Periodo) %>%
+        arrange(Periodo) %>% filter(Provincia == input$prov) %>%
+        unique()
+    } else if (!is.null(input$prog) && is.null(input$sex)) {
+      serie <- df[,2:6] %>% 
+        filter(Programa == input$prog) %>% group_by(Periodo) %>%
+        arrange(Periodo) %>% filter(Programa == input$prog) %>%
+        unique()
+    } else if (!is.null(input$sex) && is.null(input$prog)) {
+      serie <- df[,2:6] %>% 
+        filter(Sexo == input$sex) %>% group_by(Periodo) %>%
+        arrange(Periodo) %>% filter(Provincia == input$prov) %>%
+        unique()
+    } else {
+      serie <- df[,2:6] %>% filter(Programa==input$prog) %>% 
+        filter(Sexo == input$sex) %>% group_by(Periodo) %>%
+        arrange(Periodo) %>% filter(Provincia == input$prov) %>%
+        unique()  
+    }
+    })
+
+output$distPlot <- renderPlot({
+  ggplot(dat(),aes(x=Periodo,y=Titulares,colour=Programa,linetype=Sexo)) +
+    geom_line() +
+    geom_tile("Cantidad de titulares de los planes 2015-2017")
+})
   # 
   # output$distPlot <- renderPlot({
   #   # generate bins based on input$bins from ui.R
