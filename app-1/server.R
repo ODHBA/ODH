@@ -8,49 +8,62 @@
 #
 library(dplyr)
 library(shiny)
+library(magrittr)
 library(ggplot2)
+library(tidyr)
 # cargo los archivos
 df <- read.csv("~/ODH/datos_economia_social/10_economia_social_tabla2.csv")
 # convierto los periodos en formato 'Date' dejando solo los anios
 for (tt in 1:length(df$Periodo)) df$Periodo[tt] <- format(as.Date(paste0(as.character(df$Periodo[tt]),"01"),
                                                                   format = "%Y%m%d"),"%Y")
+# nombres de la provincia
+prov_names <- read.csv("~/ODH/datos_economia_social/10_economia_social_tabla2.csv") %>%
+  distinct(Provincia)
+prov_choices <- list()
+for (ii in 1:dim(prov_names)[1]) {
+  val <- prov_names$Provincia[ii]
+  prov_choices[[as.character(val)]] <- prov_names$Provincia[ii]
+}
 # Define server logic required to draw a histogram
-server <- function(input, output) {
-  dat <- reactive({
+server <- function(input, output,session) {
+  observe({
+    x <- input$prog
+    if (x=="EH") {
+      updateCheckboxGroupInput(session,"sex",
+                              choices = "F",
+                              selected = "F")
+    }
+  })
+  datos <- reactive({
+    prov_sel <- input$prov
+    sex_sel <- input$sex
     if (!is.null(input$prog) && !is.null(input$sex)) {
-      serie <- df[,2:6] %>% group_by(Periodo) %>%
-        arrange(Periodo) %>% filter(Provincia == input$prov) %>%
-        unique()
+      serie <- df[,2:6] %>% filter(Programa==input$prog) %>% 
+        filter(Sexo %in% sex_sel) %>% group_by(Periodo) %>%
+        arrange(Periodo) %>% filter(Provincia %in% prov_sel) %>%
+        unique()  
     } else if (!is.null(input$prog) && is.null(input$sex)) {
       serie <- df[,2:6] %>% 
         filter(Programa == input$prog) %>% group_by(Periodo) %>%
-        arrange(Periodo) %>% filter(Programa == input$prog) %>%
-        unique()
+        arrange(Periodo) %>% filter(Provincia %in% prov_sel) %>% unique()
     } else if (!is.null(input$sex) && is.null(input$prog)) {
       serie <- df[,2:6] %>% 
-        filter(Sexo == input$sex) %>% group_by(Periodo) %>%
-        arrange(Periodo) %>% filter(Provincia == input$prov) %>%
+        filter(Sexo %in% sex_sel) %>% group_by(Periodo) %>%
+        arrange(Periodo) %>% filter(Provincia %in% prov_sel) %>%
         unique()
     } else {
-      serie <- df[,2:6] %>% filter(Programa==input$prog) %>% 
-        filter(Sexo == input$sex) %>% group_by(Periodo) %>%
-        arrange(Periodo) %>% filter(Provincia == input$prov) %>%
-        unique()  
+      serie <- df[,2:6] %>% group_by(Periodo) %>%
+        arrange(Periodo) %>% filter(Provincia %in% prov_sel) %>%
+        unique()
     }
     })
 
-output$distPlot <- renderPlot({
-  ggplot(dat(),aes(x=Periodo,y=Titulares,colour=Programa,linetype=Sexo)) +
-    geom_line() +
-    geom_tile("Cantidad de titulares de los planes 2015-2017")
+output$distPlot <- renderPlot ({
+p <- ggplot(data=datos()) +
+    geom_line(aes(Periodo,Titulares,group=interaction(Provincia,Sexo),
+                  colour=Provincia,linetype=Sexo)) +
+                  geom_point(aes(Periodo,Titulares))
+  p
 })
-  # 
-  # output$distPlot <- renderPlot({
-  #   # generate bins based on input$bins from ui.R
-  #   x    <- faithful[, 2] 
-  #   bins <- seq(min(x), max(x), length.out = input$bins + 1)
-  #   
-  #   # draw the histogram with the specified number of bins
-  #   hist(x, breaks = bins, col = 'darkgray', border = 'white')
-  # })
+
 }

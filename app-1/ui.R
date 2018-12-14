@@ -9,7 +9,7 @@
 library(magrittr)
 library(dplyr)
 library(shiny)
-
+library(shinyWidgets)
 # abro el archivo '10_economia_social_tabla2.csv' para tomar los 
 # nombres de la provincia
 prov_names <- read.csv("~/ODH/datos_economia_social/10_economia_social_tabla2.csv") %>%
@@ -17,7 +17,7 @@ prov_names <- read.csv("~/ODH/datos_economia_social/10_economia_social_tabla2.cs
 prov_choices <- list()
 for (ii in 1:dim(prov_names)[1]) {
   val <- prov_names$Provincia[ii]
-  prov_choices[[as.character(val)]] <- ii
+  prov_choices[[as.character(val)]] <- prov_names$Provincia[ii]
 }
 ui <- fluidPage(
   navbarPage(title = "Informes del ODH",
@@ -26,34 +26,37 @@ ui <- fluidPage(
                       wellPanel(
                       fluidRow(
                           column(4,
-                          checkboxGroupInput("sex",
-                                             h3("Sexo"),
-                          choices = list( "Mujeres" = "F",
-                                          "Hombres" = "M"),
-                      selected = "F")),
+
+                      selectInput("prog",
+                                  h3("Programa"),
+                                  choices = list( "Arg. Trabaja" = "AT",
+                                                  "Ellas Hacen" = "EH"),
+                                  selected = "AT")
+                      ),
                      
-                      
+                      # elijo multiple-choice, para seleccionar varias provincias
                       column(4,
-                            selectInput("prov",
+                            pickerInput("prov",
                                                h3("Seleccione la Provincia/s"),
                                                choices = prov_choices,
-                                        width = '400px',
-                                        selected = 2)  
+                                        width = '200px',
+                                        selected = 'CAPITAL_FEDERAL',multiple = TRUE)  
                             ),
                       column(4,
-                             checkboxGroupInput("prog",
-                                                h3("Programa"),
-                                                choices = list( "Arg. Trabaja" = "AT",
-                                                                "Ellas Hacen" = "EH"),
-                                                selected = "AT")
+                             checkboxGroupInput("sex",
+                                                h3("Sexo"),
+                                                choices = list( "Mujeres" = "F",
+                                                                "Hombres" = "M"),
+                                                selected = "F")
                       )
                      )
                           
-                          )),
+                          ),
              fluidRow(
                plotOutput("distPlot")
-             ),
-             tabPanel("Pers. en sit. calle","Hello World")
+             )),
+             tabPanel("Pers. en sit. calle",titlePanel("¡PRÓXIMAMENTE!")),
+             tabPanel("ESI",titlePanel("¡PRÓXIMAMENTE!"))
   )
 )
 
