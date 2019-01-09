@@ -45,10 +45,18 @@ ui <- fluidPage(
                       column(4,
                              checkboxGroupInput("sex",
                                                 h3("Sexo"),
-                                                choices = list( "Mujeres" = "F",
-                                                                "Hombres" = "M"),
-                                                selected = "F")
+                                                choiceNames = list( icon("Mujeres") ,
+                                                                icon("Hombres")),
+                                                choiceValues = list("F","M")
+                                                )
                       )
+                      # column(4,
+                      #        selectInput("est",
+                      #                           h3("Estadístico"),
+                      #                           choices = list( "Absoluto" = "A",
+                      #                                           "Relativo" = "R"),
+                      #                           selected = "A")
+                      # )
                      )
                           
                           ),
